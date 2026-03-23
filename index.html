@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD JS Puro</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 10px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>📝 CRUD com JavaScript</h1>
+
+  <input id="input" placeholder="Digite algo...">
+  <button onclick="adicionar()">Adicionar</button>
+
+  <ul id="lista"></ul>
+
+  <script>
+    let itens = JSON.parse(localStorage.getItem("itens")) || [];
+    let editandoIndex = null;
+
+    function salvar() {
+      localStorage.setItem("itens", JSON.stringify(itens));
+    }
+
+    function render() {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+
+      itens.forEach((item, index) => {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+          ${item}
+          <button onclick="editar(${index})">✏️</button>
+          <button onclick="remover(${index})">🗑️</button>
+        `;
+
+        lista.appendChild(li);
+      });
+    }
+
+    function adicionar() {
+      const input = document.getElementById("input");
+      const valor = input.value;
+
+      if (valor.trim() === "") return;
+
+      if (editandoIndex === null) {
+        itens.push(valor);
+      } else {
+        itens[editandoIndex] = valor;
+        editandoIndex = null;
+      }
+
+      input.value = "";
+      salvar();
+      render();
+    }
+
+    function remover(index) {
+      itens.splice(index, 1);
+      salvar();
+      render();
+    }
+
+    function editar(index) {
+      const input = document.getElementById("input");
+      input.value = itens[index];
+      editandoIndex = index;
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
